@@ -1,4 +1,5 @@
 import { App } from '/@/App'
+import { TitleText } from './Controls/TitleText/TitleText'
 import { ButtonToggle } from './Controls/ButtonToggle/ButtonToggle'
 import { Toggle } from './Controls/Toggle/Toggle'
 import { SettingsWindow } from './SettingsWindow'
@@ -24,6 +25,7 @@ import { pathFromHandle } from '../../FileSystem/Virtual/pathFromHandle'
 export async function setupSettings(settings: SettingsWindow) {
 	const app = await App.getApp()
 
+	//#region Appearance
 	settings.addControl(
 		new ButtonToggle({
 			category: 'appearance',
@@ -40,10 +42,29 @@ export async function setupSettings(settings: SettingsWindow) {
 	settings.addControl(
 		new Toggle({
 			category: 'appearance',
+			name: 'windows.settings.appearance.hideToolbarItems.name',
+			description:
+				'windows.settings.appearance.hideToolbarItems.description',
+			key: 'hideToolbarItems',
+			default: false,
+		})
+	)
+	settings.addControl(
+		new Toggle({
+			category: 'appearance',
 			name: 'windows.settings.appearance.highContrast.name',
 			description: 'windows.settings.appearance.highContrast.description',
 			key: 'highContrast',
 			default: false,
+		})
+	)
+
+	//Title Testing, Change however you want.
+	settings.addControl(
+		new TitleText({
+			category: 'appearance',
+			name: 'Themes',
+			description: 'Theme related settings.',
 		})
 	)
 	settings.addControl(
@@ -122,6 +143,14 @@ export async function setupSettings(settings: SettingsWindow) {
 		)
 	}
 
+	//Title Testing, Change however you want.
+	settings.addControl(
+		new TitleText({
+			category: 'appearance',
+			name: 'Fonts',
+			description: 'Font related settings.', //Definitely need to be more descriptive.
+		})
+	)
 	settings.addControl(
 		new FontSelection({
 			category: 'appearance',
@@ -182,35 +211,9 @@ export async function setupSettings(settings: SettingsWindow) {
 			},
 		})
 	)
-	settings.addControl(
-		new Toggle({
-			category: 'appearance',
-			name: 'windows.settings.appearance.hideToolbarItems.name',
-			description:
-				'windows.settings.appearance.hideToolbarItems.description',
-			key: 'hideToolbarItems',
-			default: false,
-		})
-	)
-	settings.addControl(
-		new Toggle({
-			category: 'sidebar',
-			name: 'windows.settings.sidebar.sidebarRight.name',
-			description: 'windows.settings.sidebar.sidebarRight.description',
-			key: 'isSidebarRight',
-			default: false,
-		})
-	)
-	settings.addControl(
-		new Toggle({
-			category: 'sidebar',
-			name: 'windows.settings.sidebar.shrinkSidebarElements.name',
-			description:
-				'windows.settings.sidebar.shrinkSidebarElements.description',
-			key: 'smallerSidebarElements',
-			default: false,
-		})
-	)
+	//#endregion
+
+	//#region Sidebar
 	settings.addControl(
 		new ButtonToggle({
 			category: 'sidebar',
@@ -236,6 +239,25 @@ export async function setupSettings(settings: SettingsWindow) {
 		})
 	)
 	settings.addControl(
+		new Toggle({
+			category: 'sidebar',
+			name: 'windows.settings.sidebar.sidebarRight.name',
+			description: 'windows.settings.sidebar.sidebarRight.description',
+			key: 'isSidebarRight',
+			default: false,
+		})
+	)
+	settings.addControl(
+		new Toggle({
+			category: 'sidebar',
+			name: 'windows.settings.sidebar.shrinkSidebarElements.name',
+			description:
+				'windows.settings.sidebar.shrinkSidebarElements.description',
+			key: 'smallerSidebarElements',
+			default: false,
+		})
+	)
+	settings.addControl(
 		new Sidebar({
 			category: 'sidebar',
 			name: 'windows.settings.sidebar.shrinkSidebarElements.name',
@@ -244,6 +266,9 @@ export async function setupSettings(settings: SettingsWindow) {
 			key: 'hideElements',
 		})
 	)
+	//#endregion
+
+	//#region General
 	settings.addControl(
 		new Selection({
 			omitFromSaveFile: true,
@@ -356,8 +381,9 @@ export async function setupSettings(settings: SettingsWindow) {
 			})
 		)
 	}
+	//#endregion
 
-	// Editor
+	//#region Editor
 	settings.addControl(
 		new Selection({
 			category: 'editor',
@@ -371,19 +397,17 @@ export async function setupSettings(settings: SettingsWindow) {
 			default: 'rawText',
 		})
 	)
-
 	settings.addControl(
-		new Toggle({
+		new Selection({
 			category: 'editor',
-			name: 'windows.settings.editor.bracketPairColorization.name',
-			description:
-				'windows.settings.editor.bracketPairColorization.description',
-			key: 'bracketPairColorization',
-			default: false,
+			name: 'windows.settings.editor.wordWrapColumns.name',
+			description: 'windows.settings.editor.wordWrapColumns.description',
+			key: 'wordWrapColumns',
+			default: '80',
+			options: ['40', '60', '80', '100', '120', '140', '160'],
 			onChange: async (val) => {
 				app.projectManager.updateAllEditorOptions({
-					// @ts-expect-error The monaco team did not update the types yet
-					'bracketPairColorization.enabled': val,
+					wordWrapColumn: Number(val),
 				})
 			},
 		})
@@ -403,16 +427,17 @@ export async function setupSettings(settings: SettingsWindow) {
 		})
 	)
 	settings.addControl(
-		new Selection({
+		new Toggle({
 			category: 'editor',
-			name: 'windows.settings.editor.wordWrapColumns.name',
-			description: 'windows.settings.editor.wordWrapColumns.description',
-			key: 'wordWrapColumns',
-			default: '80',
-			options: ['40', '60', '80', '100', '120', '140', '160'],
+			name: 'windows.settings.editor.bracketPairColorization.name',
+			description:
+				'windows.settings.editor.bracketPairColorization.description',
+			key: 'bracketPairColorization',
+			default: false,
 			onChange: async (val) => {
 				app.projectManager.updateAllEditorOptions({
-					wordWrapColumn: Number(val),
+					// @ts-expect-error The monaco team did not update the types yet
+					'bracketPairColorization.enabled': val,
 				})
 			},
 		})
@@ -515,8 +540,9 @@ export async function setupSettings(settings: SettingsWindow) {
 			default: false,
 		})
 	)
+	//#endregion
 
-	// Projects
+	//#region Projects
 	settings.addControl(
 		new TextField({
 			category: 'projects',
@@ -524,6 +550,15 @@ export async function setupSettings(settings: SettingsWindow) {
 			description: 'windows.settings.projects.defaultAuthor.description',
 			key: 'defaultAuthor',
 			default: '',
+		})
+	)
+	settings.addControl(
+		new TextField({
+			category: 'projects',
+			name: 'windows.settings.projects.defaultPrefix.name',
+			description: 'windows.settings.projects.defaultPrefix.description',
+			key: 'defaultPrefix',
+			default: 'bridge',
 		})
 	)
 	settings.addControl(
@@ -556,13 +591,16 @@ export async function setupSettings(settings: SettingsWindow) {
 			default: true,
 		})
 	)
+	//#endregion
 
-	// Actions
+	//#region Actions
 	Object.values(app.actionManager.state).forEach((action) => {
 		if (action.type === 'action')
 			settings.addControl(new ActionViewer(action))
 	})
+	//#endregion
 
+	//#region Developer
 	if (import.meta.env.DEV) {
 		settings.addControl(
 			new ButtonToggle({
@@ -598,4 +636,5 @@ export async function setupSettings(settings: SettingsWindow) {
 			settings.addControl(new ActionViewer(action, 'developers'))
 		})
 	}
+	//#endregion
 }

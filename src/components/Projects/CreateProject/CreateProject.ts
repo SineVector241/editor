@@ -232,7 +232,13 @@ export class CreateProjectWindow extends NewBaseWindow {
 			description: '',
 			icon: null,
 			name: 'New Project',
-			namespace: 'bridge',
+			namespace:
+				<string | undefined>settingsState?.projects?.defaultPrefix ===
+				''
+					? 'bridge'
+					: <string | undefined>(
+							settingsState?.projects?.defaultPrefix
+					  ) ?? 'bridge',
 			targetVersion: '',
 			packs: ['.bridge', 'behaviorPack', 'resourcePack'],
 			rpAsBpDependency: false,
